@@ -1,5 +1,5 @@
 #Name:           Unofficial AussieBB Network Tester (http://abbnt.eth7.network)
-#Version:        1.0.0
+#Version:        1.0.1
 
 # Format of the date and time for results directory
 $dateTimeFormat = "dd-MM-yyy-HHmm"
@@ -61,11 +61,14 @@ $speedCheckAddresses = [ordered]@{
     }
 }
 
+# Add support for TLS 1.2 so https works.
+[System.Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 Import-Module $PSScriptRoot\SpeedFunctions.psm1
 Import-Module $PSScriptRoot\LatencyFunctions.psm1
 
 # Title
-Write-Host " Unofficial AussieBB Network Tester v1.0.0`n`n This can take a while. Please be patient,`n you will be prompted once the test has completed"
+Write-Host " Unofficial AussieBB Network Tester v1.0.1`n`n This can take a while. Please be patient,`n you will be prompted once the test has completed"
 
 # Setup the results directory
 [string]$localPath = Get-Location
@@ -74,6 +77,10 @@ $filePath = "$($DirectoryPath)\$([DateTime]::Now.ToString($dateTimeFormat))\"
 
 # Make the results directory
 New-Item -ItemType Directory -Force -Path $filePath | Out-Null
+
+# Perform POI check
+Write-Host "`n----------------------`n Your POI`n----------------------"
+Write-Host ' '((Invoke-WebRequest -Uri "https://www.aussiebroadband.com.au/__process.php?mode=CVCDropdown" -UseBasicParsing | ConvertFrom-Json) | Where-Object { $_.selected }).name
 
 # Perform latency tests
 Write-Host "`n----------------------`n Latency`n----------------------"
