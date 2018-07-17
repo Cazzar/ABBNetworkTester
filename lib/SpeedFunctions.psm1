@@ -8,8 +8,7 @@ function DownloadSpeedTest
     foreach ($testAddress in $HashTable.Keys)
     {
         # Add support for TLS 1.2 so https works.
-        $TLSProtocol = [System.Net.SecurityProtocolType]'Tls12'
-        [System.Net.ServicePointManager]::SecurityProtocol = $TLSProtocol
+        [System.Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
         $server = $HashTable[$testAddress]
 
